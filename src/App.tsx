@@ -417,6 +417,30 @@ export default function App() {
         {activeTab === 'guide' && <AlgorithmGuide />}
       </main>
 
+      {/* Academic Classroom Footer */}
+      <footer className="border-t border-slate-900 bg-slate-950/90 py-5 px-6 mt-8">
+        <div className="max-w-[1500px] mx-auto flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-slate-500 font-mono">
+          <div className="flex items-center gap-2">
+            <span className="text-slate-400 font-semibold">AlgoTrace C++</span>
+            <span>·</span>
+            <span>Developed by Prof. Vinay Kagitha</span>
+            <span>·</span>
+            <span className="text-slate-400">OCCC Computer Science</span>
+          </div>
+
+          <div className="flex items-center gap-3 text-[11px]">
+            <a
+              href="https://ais-pre-qjy3k3vwzmqpzf665ivibh-838265961928.us-east1.run.app"
+              target="_blank"
+              rel="noreferrer"
+              className="text-cyan-400 hover:text-cyan-300 transition-colors"
+            >
+              Live Student Link: ais-pre-qjy3k3vwzmqpzf665ivibh-838265961928.us-east1.run.app
+            </a>
+          </div>
+        </div>
+      </footer>
+
       {/* List of Lists Manager Modal */}
       <ListManagerModal
         isOpen={isListModalOpen}
