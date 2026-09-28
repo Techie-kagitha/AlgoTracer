@@ -214,6 +214,7 @@ export function generateInsertionSortSteps(initialArray: number[]): SortStep[] {
 
 export const insertionSortDefinition: AlgorithmDefinition = {
   id: 'insertion',
+  category: 'sorting',
   name: 'Insertion Sort',
   cppFunctionName: 'insertionSort(int arr[], int n)',
   complexity: {

@@ -4,16 +4,13 @@ import { selectionSortDefinition } from './selectionSort';
 import { insertionSortDefinition } from './insertionSort';
 import { quickSortDefinition } from './quickSort';
 import { mergeSortDefinition } from './mergeSort';
+import { linearSearchDefinition } from './linearSearch';
+import { binarySearchDefinition } from './binarySearch';
+import { jumpSearchDefinition } from './jumpSearch';
+import { interpolationSearchDefinition } from './interpolationSearch';
+import { exponentialSearchDefinition } from './exponentialSearch';
 
-export const ALGORITHMS: Record<AlgorithmId, AlgorithmDefinition> = {
-  bubble: bubbleSortDefinition,
-  selection: selectionSortDefinition,
-  insertion: insertionSortDefinition,
-  quick: quickSortDefinition,
-  merge: mergeSortDefinition,
-};
-
-export const ALGORITHM_LIST: AlgorithmDefinition[] = [
+export const SORTING_ALGORITHMS: AlgorithmDefinition[] = [
   bubbleSortDefinition,
   selectionSortDefinition,
   insertionSortDefinition,
@@ -21,12 +18,46 @@ export const ALGORITHM_LIST: AlgorithmDefinition[] = [
   mergeSortDefinition,
 ];
 
+export const SEARCHING_ALGORITHMS: AlgorithmDefinition[] = [
+  linearSearchDefinition,
+  binarySearchDefinition,
+  jumpSearchDefinition,
+  interpolationSearchDefinition,
+  exponentialSearchDefinition,
+];
+
+export const ALL_ALGORITHMS: AlgorithmDefinition[] = [
+  ...SORTING_ALGORITHMS,
+  ...SEARCHING_ALGORITHMS,
+];
+
+export const ALGORITHMS: Record<AlgorithmId, AlgorithmDefinition> = {
+  bubble: bubbleSortDefinition,
+  selection: selectionSortDefinition,
+  insertion: insertionSortDefinition,
+  quick: quickSortDefinition,
+  merge: mergeSortDefinition,
+  linear: linearSearchDefinition,
+  binary: binarySearchDefinition,
+  jump: jumpSearchDefinition,
+  interpolation: interpolationSearchDefinition,
+  exponential: exponentialSearchDefinition,
+};
+
+export const ALGORITHM_LIST = ALL_ALGORITHMS;
+
 export const DEFAULT_LIST_PRESETS: NumberListPreset[] = [
   {
     id: 'classic',
     name: 'Classic Textbook',
-    description: 'General 7-element unsorted array with mixed small and large numbers.',
+    description: 'General 7-element unsorted array with mixed numbers.',
     data: [64, 34, 25, 12, 22, 11, 90]
+  },
+  {
+    id: 'sorted-search',
+    name: 'Sorted Array (Search Ready)',
+    description: 'Pre-sorted array [11, 12, 22, 25, 34, 64, 90] ready for Binary/Jump/Interpolation search.',
+    data: [11, 12, 22, 25, 34, 64, 90]
   },
   {
     id: 'compact',

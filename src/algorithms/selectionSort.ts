@@ -218,6 +218,7 @@ export function generateSelectionSortSteps(initialArray: number[]): SortStep[] {
 
 export const selectionSortDefinition: AlgorithmDefinition = {
   id: 'selection',
+  category: 'sorting',
   name: 'Selection Sort',
   cppFunctionName: 'selectionSort(int arr[], int n)',
   complexity: {

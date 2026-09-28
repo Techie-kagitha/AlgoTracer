@@ -198,6 +198,7 @@ export function generateBubbleSortSteps(initialArray: number[]): SortStep[] {
 
 export const bubbleSortDefinition: AlgorithmDefinition = {
   id: 'bubble',
+  category: 'sorting',
   name: 'Bubble Sort',
   cppFunctionName: 'bubbleSort(int arr[], int n)',
   complexity: {

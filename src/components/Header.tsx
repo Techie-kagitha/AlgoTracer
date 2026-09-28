@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
-import { Layers, GitCompare, BookOpen, ListFilter, GraduationCap, Share2, Check } from 'lucide-react';
+import { Layers, GitCompare, BookOpen, ListFilter, GraduationCap, Share2, Check, ArrowUpDown, Search } from 'lucide-react';
 import { AudioControls } from './AudioControls';
 import { ClassroomModal } from './ClassroomModal';
+import { AlgorithmCategory } from '../types/sorting';
 
 export type ActiveTab = 'debugger' | 'batch' | 'compare' | 'guide';
 
@@ -10,6 +11,8 @@ interface HeaderProps {
   onTabChange: (tab: ActiveTab) => void;
   onOpenListManager: () => void;
   listCount: number;
+  category: AlgorithmCategory;
+  onCategoryChange: (cat: AlgorithmCategory) => void;
 }
 
 export const Header: React.FC<HeaderProps> = ({
@@ -17,6 +20,8 @@ export const Header: React.FC<HeaderProps> = ({
   onTabChange,
   onOpenListManager,
   listCount,
+  category,
+  onCategoryChange,
 }) => {
   const [isClassroomOpen, setIsClassroomOpen] = useState(false);
   const [copied, setCopied] = useState(false);
@@ -31,15 +36,38 @@ export const Header: React.FC<HeaderProps> = ({
 
   return (
     <>
-      <header className="flex items-center justify-between px-6 py-3.5 border-b border-slate-800 bg-slate-950/80 backdrop-blur-md sticky top-0 z-40">
-        {/* Zone 1: Single text element wordmark */}
+      <header className="flex flex-wrap items-center justify-between px-6 py-3 border-b border-slate-800 bg-slate-950/85 backdrop-blur-md sticky top-0 z-40 gap-3">
+        {/* Zone 1: Single text element wordmark + Category Mode Pill */}
         <div className="flex items-center gap-3">
           <a href="/" className="text-lg font-bold tracking-tight text-white hover:text-cyan-300 transition-colors">
             AlgoTrace C++
           </a>
-          <span className="hidden sm:inline text-xs text-slate-500 font-mono">
-            Prof. Vinay Kagitha · OCCC
-          </span>
+
+          {/* Mode Switcher: Sorting vs Searching */}
+          <div className="flex items-center p-0.5 bg-slate-900 border border-slate-700/80 rounded-lg shadow-inner">
+            <button
+              onClick={() => onCategoryChange('sorting')}
+              className={`flex items-center gap-1.5 px-2.5 py-1 text-xs font-semibold rounded-md transition-all ${
+                category === 'sorting'
+                  ? 'bg-cyan-500 text-slate-950 shadow-sm'
+                  : 'text-slate-400 hover:text-slate-200'
+              }`}
+            >
+              <ArrowUpDown className="w-3 h-3" />
+              <span>Sorting (5)</span>
+            </button>
+            <button
+              onClick={() => onCategoryChange('searching')}
+              className={`flex items-center gap-1.5 px-2.5 py-1 text-xs font-semibold rounded-md transition-all ${
+                category === 'searching'
+                  ? 'bg-cyan-500 text-slate-950 shadow-sm'
+                  : 'text-slate-400 hover:text-slate-200'
+              }`}
+            >
+              <Search className="w-3 h-3" />
+              <span>Searching (5)</span>
+            </button>
+          </div>
         </div>
 
         {/* Zone 2: Clean text navigation links */}
@@ -77,7 +105,7 @@ export const Header: React.FC<HeaderProps> = ({
             }`}
           >
             <GitCompare className="w-3.5 h-3.5" />
-            <span>Compare Algorithms</span>
+            <span>Compare Arena</span>
           </button>
 
           <button
@@ -132,5 +160,3 @@ export const Header: React.FC<HeaderProps> = ({
     </>
   );
 };
-
-

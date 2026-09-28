@@ -1,10 +1,11 @@
 import React from 'react';
 import { AlgorithmDefinition, NumberListPreset } from '../types/sorting';
-import { Play, ArrowRight, BarChart3, Zap, CheckCircle2 } from 'lucide-react';
+import { Play, ArrowRight, BarChart3, Zap, CheckCircle2, Target, XCircle } from 'lucide-react';
 
 interface MultiListLabProps {
   lists: NumberListPreset[];
   algorithm: AlgorithmDefinition;
+  target?: number;
   onSelectAndDebugList: (listId: string) => void;
   onOpenListManager: () => void;
 }
@@ -12,19 +13,26 @@ interface MultiListLabProps {
 export const MultiListLab: React.FC<MultiListLabProps> = ({
   lists,
   algorithm,
+  target = 25,
   onSelectAndDebugList,
   onOpenListManager,
 }) => {
   // Precompute metrics for every list with the selected algorithm
+  const isSearch = algorithm.category === 'searching';
+
   const results = lists.map((list) => {
-    const steps = algorithm.generateSteps(list.data);
+    const steps = algorithm.generateSteps(list.data, target);
     const finalStep = steps[steps.length - 1];
+    const found = finalStep && finalStep.foundIndex !== undefined && finalStep.foundIndex >= 0;
+    const foundIndex = finalStep?.foundIndex;
+
     return {
       list,
       totalSteps: steps.length,
       comparisons: finalStep ? finalStep.comparisons : 0,
       swaps: finalStep ? finalStep.swaps : 0,
-      sortedData: finalStep ? finalStep.array : [...list.data].sort((a, b) => a - b),
+      found,
+      foundIndex,
     };
   });
 
@@ -39,22 +47,32 @@ export const MultiListLab: React.FC<MultiListLabProps> = ({
               Multi-List Test Suite Analysis · {algorithm.name}
             </h2>
             <p className="text-xs text-slate-300 mt-1 leading-relaxed max-w-2xl">
-              Observe how {algorithm.name} handles various input lists with differing distributions (reversed, nearly-sorted, duplicates, small vs large). Notice how comparisons and memory writes vary based on input ordering.
+              {isSearch
+                ? `Testing ${algorithm.name} across all available lists searching for target value ${target}. Notice how comparisons vary depending on where the target is located in memory or whether it exists in the array.`
+                : `Observe how ${algorithm.name} handles various input lists with differing distributions (reversed, nearly-sorted, duplicates, small vs large).`}
             </p>
           </div>
 
-          <button
-            onClick={onOpenListManager}
-            className="self-start md:self-auto px-4 py-2 text-xs font-semibold text-slate-950 bg-cyan-400 hover:bg-cyan-300 rounded-lg transition-colors whitespace-nowrap shadow-sm"
-          >
-            + Add New List to Suite
-          </button>
+          <div className="flex items-center gap-3">
+            {isSearch && (
+              <span className="px-3 py-1.5 text-xs font-mono font-bold bg-amber-950/80 text-amber-300 border border-amber-700/80 rounded-lg shadow-sm flex items-center gap-1.5">
+                <Target className="w-3.5 h-3.5 text-amber-400" />
+                Target: {target}
+              </span>
+            )}
+            <button
+              onClick={onOpenListManager}
+              className="px-4 py-2 text-xs font-semibold text-slate-950 bg-cyan-400 hover:bg-cyan-300 rounded-lg transition-colors whitespace-nowrap shadow-sm"
+            >
+              + Add New List
+            </button>
+          </div>
         </div>
       </div>
 
       {/* Grid of Lists */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-        {results.map(({ list, totalSteps, comparisons, swaps, sortedData }) => {
+        {results.map(({ list, totalSteps, comparisons, swaps, found, foundIndex }) => {
           const maxVal = Math.max(...list.data, 100);
 
           return (
@@ -80,12 +98,17 @@ export const MultiListLab: React.FC<MultiListLabProps> = ({
                 <div className="h-20 bg-slate-950/60 border border-slate-850 rounded-lg p-2 flex items-end justify-center gap-1.5 mb-3">
                   {list.data.map((val, idx) => {
                     const h = Math.max(15, Math.round((val / maxVal) * 100));
+                    const isTargetVal = isSearch && val === target;
                     return (
                       <div
                         key={idx}
                         style={{ height: `${h}%` }}
-                        className="flex-1 max-w-[20px] bg-cyan-600/70 rounded-t-sm group-hover:bg-cyan-400/90 transition-colors"
-                        title={`[${idx}]: ${val}`}
+                        className={`flex-1 max-w-[20px] rounded-t-sm transition-colors ${
+                          isTargetVal
+                            ? 'bg-amber-400 shadow-[0_0_8px_rgba(251,191,36,0.6)]'
+                            : 'bg-cyan-600/70 group-hover:bg-cyan-400/90'
+                        }`}
+                        title={`[${idx}]: ${val}${isTargetVal ? ' (TARGET)' : ''}`}
                       />
                     );
                   })}
@@ -107,8 +130,24 @@ export const MultiListLab: React.FC<MultiListLabProps> = ({
                     <div className="font-bold text-cyan-300 tabular-nums">{comparisons}</div>
                   </div>
                   <div className="p-2 bg-slate-950/80 rounded border border-slate-800">
-                    <div className="text-[10px] text-slate-500 font-sans">Swaps</div>
-                    <div className="font-bold text-rose-300 tabular-nums">{swaps}</div>
+                    <div className="text-[10px] text-slate-500 font-sans">
+                      {isSearch ? 'Outcome' : 'Swaps'}
+                    </div>
+                    {isSearch ? (
+                      found ? (
+                        <div className="font-bold text-emerald-400 text-[11px] flex items-center justify-center gap-1">
+                          <CheckCircle2 className="w-3 h-3" />
+                          <span>[{foundIndex}]</span>
+                        </div>
+                      ) : (
+                        <div className="font-bold text-rose-400 text-[11px] flex items-center justify-center gap-1">
+                          <XCircle className="w-3 h-3" />
+                          <span>-1</span>
+                        </div>
+                      )
+                    ) : (
+                      <div className="font-bold text-rose-300 tabular-nums">{swaps}</div>
+                    )}
                   </div>
                 </div>
               </div>

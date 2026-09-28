@@ -292,6 +292,7 @@ export function generateQuickSortSteps(initialArray: number[]): SortStep[] {
 
 export const quickSortDefinition: AlgorithmDefinition = {
   id: 'quick',
+  category: 'sorting',
   name: 'Quick Sort',
   cppFunctionName: 'quickSort(int arr[], int low, int high)',
   complexity: {

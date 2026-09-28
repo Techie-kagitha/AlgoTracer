@@ -188,6 +188,24 @@ class SoundService {
   }
 
   /**
+   * Play search target match celebration chord
+   */
+  public playFound(val: number, maxVal = 100) {
+    const freq = this.valueToFrequency(val, 0, maxVal);
+    this.playTone(freq, 140, 1.0);
+    setTimeout(() => this.playTone(freq * 1.25, 140, 0.9), 60);
+    setTimeout(() => this.playTone(freq * 1.5, 220, 1.1), 120);
+  }
+
+  /**
+   * Play search target not found descending buzz
+   */
+  public playNotFound() {
+    this.playTone(220, 90, 0.6);
+    setTimeout(() => this.playTone(180, 140, 0.6), 80);
+  }
+
+  /**
    * Play victory arpeggio sweep across sorted array
    */
   public playCompletionSweep(array: number[]) {

@@ -395,6 +395,7 @@ export function generateMergeSortSteps(initialArray: number[]): SortStep[] {
 
 export const mergeSortDefinition: AlgorithmDefinition = {
   id: 'merge',
+  category: 'sorting',
   name: 'Merge Sort',
   cppFunctionName: 'mergeSort(int arr[], int left, int right)',
   complexity: {

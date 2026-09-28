@@ -161,6 +161,12 @@ class InstructorVoiceService {
       clean = 'In C++, we swap these elements: ' + clean;
     } else if (action === 'partition') {
       clean = 'Partition complete: ' + clean;
+    } else if (action === 'found') {
+      clean = 'Match found! ' + clean;
+    } else if (action === 'not_found') {
+      clean = 'Search complete. ' + clean;
+    } else if (action === 'eliminate') {
+      clean = 'Eliminating range: ' + clean;
     } else if (action === 'done') {
       clean = 'Congratulations! ' + clean;
     }

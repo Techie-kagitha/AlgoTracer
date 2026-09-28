@@ -21,6 +21,27 @@ export const VisualizerCanvas: React.FC<VisualizerCanvasProps> = ({
   // Map status to semantic color & glow
   const getStatusStyles = (status: ElementStatus) => {
     switch (status) {
+      case 'found':
+        return {
+          barBg: 'bg-emerald-400 border-emerald-200 shadow-[0_0_20px_rgba(52,211,153,0.7)] animate-pulse',
+          textColor: 'text-emerald-300 font-bold',
+          badgeText: 'Match Found!',
+          badgeBg: 'bg-emerald-950 text-emerald-300 border-emerald-600'
+        };
+      case 'probe':
+        return {
+          barBg: 'bg-purple-500 border-purple-300 shadow-[0_0_15px_rgba(168,85,247,0.5)]',
+          textColor: 'text-purple-300',
+          badgeText: 'Probe / Mid',
+          badgeBg: 'bg-purple-950/80 text-purple-300 border-purple-800'
+        };
+      case 'eliminated':
+        return {
+          barBg: 'bg-slate-800/40 border-slate-800 opacity-25',
+          textColor: 'text-slate-600 line-through',
+          badgeText: 'Eliminated',
+          badgeBg: 'bg-slate-950 text-slate-600 border-slate-900'
+        };
       case 'comparing':
         return {
           barBg: 'bg-cyan-500 border-cyan-300 shadow-[0_0_15px_rgba(6,182,212,0.4)]',
@@ -97,6 +118,12 @@ export const VisualizerCanvas: React.FC<VisualizerCanvasProps> = ({
           <span className="text-xs font-semibold uppercase tracking-wider text-slate-400">
             {algorithmName} Stage
           </span>
+          {currentStep.target !== undefined && (
+            <span className="text-xs font-mono font-bold bg-amber-950/80 text-amber-300 border border-amber-700/80 px-2 py-0.5 rounded shadow-sm flex items-center gap-1.5">
+              <span className="w-1.5 h-1.5 rounded-full bg-amber-400 animate-ping"></span>
+              Target: {currentStep.target}
+            </span>
+          )}
           {subRange && (
             <span className="text-xs text-cyan-400/90 font-mono bg-cyan-950/50 px-2 py-0.5 rounded border border-cyan-800/50">
               Active Range: [{subRange[0]} ... {subRange[1]}]
@@ -106,26 +133,49 @@ export const VisualizerCanvas: React.FC<VisualizerCanvasProps> = ({
 
         {/* Legend with explicit text tags */}
         <div className="flex flex-wrap items-center gap-3 text-[11px] text-slate-400 font-mono">
-          <div className="flex items-center gap-1.5">
-            <span className="w-2.5 h-2.5 rounded-sm bg-cyan-500"></span>
-            <span>Comparing</span>
-          </div>
-          <div className="flex items-center gap-1.5">
-            <span className="w-2.5 h-2.5 rounded-sm bg-rose-500"></span>
-            <span>Swapping</span>
-          </div>
-          <div className="flex items-center gap-1.5">
-            <span className="w-2.5 h-2.5 rounded-sm bg-purple-500"></span>
-            <span>Pivot / Min</span>
-          </div>
-          <div className="flex items-center gap-1.5">
-            <span className="w-2.5 h-2.5 rounded-sm bg-amber-400"></span>
-            <span>Key / Write</span>
-          </div>
-          <div className="flex items-center gap-1.5">
-            <span className="w-2.5 h-2.5 rounded-sm bg-emerald-500"></span>
-            <span>Sorted</span>
-          </div>
+          {currentStep.target !== undefined ? (
+            <>
+              <div className="flex items-center gap-1.5">
+                <span className="w-2.5 h-2.5 rounded-sm bg-cyan-500"></span>
+                <span>Testing</span>
+              </div>
+              <div className="flex items-center gap-1.5">
+                <span className="w-2.5 h-2.5 rounded-sm bg-purple-500"></span>
+                <span>Probe / Mid</span>
+              </div>
+              <div className="flex items-center gap-1.5">
+                <span className="w-2.5 h-2.5 rounded-sm bg-slate-800 opacity-50 border border-slate-700"></span>
+                <span>Eliminated</span>
+              </div>
+              <div className="flex items-center gap-1.5">
+                <span className="w-2.5 h-2.5 rounded-sm bg-emerald-400"></span>
+                <span>Target Found</span>
+              </div>
+            </>
+          ) : (
+            <>
+              <div className="flex items-center gap-1.5">
+                <span className="w-2.5 h-2.5 rounded-sm bg-cyan-500"></span>
+                <span>Comparing</span>
+              </div>
+              <div className="flex items-center gap-1.5">
+                <span className="w-2.5 h-2.5 rounded-sm bg-rose-500"></span>
+                <span>Swapping</span>
+              </div>
+              <div className="flex items-center gap-1.5">
+                <span className="w-2.5 h-2.5 rounded-sm bg-purple-500"></span>
+                <span>Pivot / Min</span>
+              </div>
+              <div className="flex items-center gap-1.5">
+                <span className="w-2.5 h-2.5 rounded-sm bg-amber-400"></span>
+                <span>Key / Write</span>
+              </div>
+              <div className="flex items-center gap-1.5">
+                <span className="w-2.5 h-2.5 rounded-sm bg-emerald-500"></span>
+                <span>Sorted</span>
+              </div>
+            </>
+          )}
         </div>
       </div>
 

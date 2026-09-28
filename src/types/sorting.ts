@@ -1,4 +1,9 @@
-export type AlgorithmId = 'bubble' | 'selection' | 'insertion' | 'quick' | 'merge';
+export type AlgorithmCategory = 'sorting' | 'searching';
+
+export type SortingAlgorithmId = 'bubble' | 'selection' | 'insertion' | 'quick' | 'merge';
+export type SearchingAlgorithmId = 'linear' | 'binary' | 'jump' | 'interpolation' | 'exponential';
+
+export type AlgorithmId = SortingAlgorithmId | SearchingAlgorithmId;
 
 export type ElementStatus = 
   | 'idle' 
@@ -8,7 +13,10 @@ export type ElementStatus =
   | 'pivot' 
   | 'key' 
   | 'subrange' 
-  | 'overwriting';
+  | 'overwriting'
+  | 'found'
+  | 'eliminated'
+  | 'probe';
 
 export interface StepVariable {
   name: string;
@@ -28,9 +36,9 @@ export interface SortStep {
   stepNumber: number;
   array: number[];
   statusMap: Record<number, ElementStatus>;
-  pointers: Record<string, number>; // e.g. { i: 2, j: 3, pivot: 5, min_idx: 1 }
+  pointers: Record<string, number>; // e.g. { i: 2, j: 3, mid: 4, low: 0, high: 6 }
   line: number; // 1-based line number in C++ code
-  action: 'init' | 'compare' | 'swap' | 'shift' | 'assign' | 'partition' | 'call' | 'return' | 'done';
+  action: 'init' | 'compare' | 'swap' | 'shift' | 'assign' | 'partition' | 'call' | 'return' | 'done' | 'found' | 'not_found' | 'eliminate';
   title: string;
   explanation: string;
   codeSnippet?: string;
@@ -40,6 +48,8 @@ export interface SortStep {
   auxArray?: (number | null)[]; // for Merge Sort temporary buffer
   subRange?: [number, number]; // [start, end] inclusive
   callStack?: CallStackFrame[];
+  target?: number;
+  foundIndex?: number;
 }
 
 export interface ComplexityInfo {
@@ -47,8 +57,8 @@ export interface ComplexityInfo {
   average: string;
   worst: string;
   space: string;
-  stable: boolean;
-  inPlace: boolean;
+  stable?: boolean;
+  inPlace?: boolean;
   summary: string;
 }
 
@@ -61,13 +71,15 @@ export interface CppCodeLine {
 
 export interface AlgorithmDefinition {
   id: AlgorithmId;
+  category: AlgorithmCategory;
   name: string;
   cppFunctionName: string;
   complexity: ComplexityInfo;
   description: string;
   cppCode: CppCodeLine[];
-  generateSteps: (initialArray: number[]) => SortStep[];
+  generateSteps: (initialArray: number[], target?: number) => SortStep[];
   keyInvariants: string[];
+  requiresSorted?: boolean;
 }
 
 export interface NumberListPreset {

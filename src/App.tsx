@@ -15,17 +15,20 @@ import { MultiListLab } from './components/MultiListLab';
 import { CompareView } from './components/CompareView';
 import { AlgorithmGuide } from './components/AlgorithmGuide';
 import { InstructorVoiceBar } from './components/InstructorVoiceBar';
-import { ALGORITHMS, ALGORITHM_LIST, DEFAULT_LIST_PRESETS } from './algorithms';
-import { AlgorithmId, NumberListPreset } from './types/sorting';
+import { SearchTargetInput } from './components/SearchTargetInput';
+import { ALGORITHMS, SORTING_ALGORITHMS, SEARCHING_ALGORITHMS, DEFAULT_LIST_PRESETS } from './algorithms';
+import { AlgorithmId, AlgorithmCategory, NumberListPreset } from './types/sorting';
 import { soundManager } from './services/soundEffects';
 import { instructorVoice } from './services/instructorVoice';
 
 export default function App() {
   const [activeTab, setActiveTab] = useState<ActiveTab>('debugger');
+  const [category, setCategory] = useState<AlgorithmCategory>('sorting');
   const [selectedAlgoId, setSelectedAlgoId] = useState<AlgorithmId>('bubble');
   const [numberLists, setNumberLists] = useState<NumberListPreset[]>(DEFAULT_LIST_PRESETS);
   const [activeListId, setActiveListId] = useState<string>(DEFAULT_LIST_PRESETS[0].id);
   const [isListModalOpen, setIsListModalOpen] = useState(false);
+  const [searchTarget, setSearchTarget] = useState<number>(25);
 
   // Playback state
   const [currentStepIndex, setCurrentStepIndex] = useState(0);
@@ -40,21 +43,55 @@ export default function App() {
   }, [numberLists, activeListId]);
 
   const activeAlgorithm = useMemo(() => {
-    return ALGORITHMS[selectedAlgoId];
-  }, [selectedAlgoId]);
+    return ALGORITHMS[selectedAlgoId] || (category === 'searching' ? SEARCHING_ALGORITHMS[0] : SORTING_ALGORITHMS[0]);
+  }, [selectedAlgoId, category]);
+
+  // Available algorithms filtered by active category
+  const availableAlgorithms = useMemo(() => {
+    return category === 'searching' ? SEARCHING_ALGORITHMS : SORTING_ALGORITHMS;
+  }, [category]);
+
+  // Check if current list is sorted
+  const isArraySorted = useMemo(() => {
+    return activeList.data.every((val, i, arr) => i === 0 || arr[i - 1] <= val);
+  }, [activeList.data]);
+
+  // Handle category change
+  const handleCategoryChange = (newCat: AlgorithmCategory) => {
+    setCategory(newCat);
+    setIsPlaying(false);
+    setIsLectureMode(false);
+    instructorVoice.stop();
+    if (newCat === 'searching') {
+      setSelectedAlgoId('linear');
+      // If array is unsorted and user switches to search, default target to an existing value
+      if (activeList.data.length > 0) {
+        setSearchTarget(activeList.data[Math.floor(activeList.data.length / 2)]);
+      }
+    } else {
+      setSelectedAlgoId('bubble');
+    }
+  };
+
+  // Helper to sort the active array in place for searching algorithms
+  const handleSortActiveList = () => {
+    const sorted = [...activeList.data].sort((a, b) => a - b);
+    const updated = { ...activeList, data: sorted };
+    setNumberLists((prev) => prev.map((l) => (l.id === activeList.id ? updated : l)));
+  };
 
   // Compute steps
   const steps = useMemo(() => {
-    return activeAlgorithm.generateSteps(activeList.data);
-  }, [activeAlgorithm, activeList]);
+    return activeAlgorithm.generateSteps(activeList.data, searchTarget);
+  }, [activeAlgorithm, activeList, searchTarget]);
 
-  // Reset step index whenever algorithm or list changes
+  // Reset step index whenever algorithm, list, or target changes
   useEffect(() => {
     setCurrentStepIndex(0);
     setIsPlaying(false);
     setIsLectureMode(false);
     instructorVoice.stop();
-  }, [selectedAlgoId, activeListId]);
+  }, [selectedAlgoId, activeListId, searchTarget]);
 
   // Subscribe to speech state
   useEffect(() => {
@@ -120,7 +157,7 @@ export default function App() {
     // Audio sonification chimes
     if (currentStep.action === 'compare') {
       const compIndices = Object.entries(currentStep.statusMap)
-        .filter(([_, status]) => status === 'comparing')
+        .filter(([_, status]) => status === 'comparing' || status === 'probe')
         .map(([idx]) => Number(idx));
 
       if (compIndices.length >= 2) {
@@ -156,6 +193,12 @@ export default function App() {
       soundManager.playTone(val * 7 + 220, 70);
     } else if (currentStep.action === 'partition') {
       soundManager.playSorted(65, maxVal);
+    } else if (currentStep.action === 'found') {
+      soundManager.playFound(currentStep.target || 25, maxVal);
+    } else if (currentStep.action === 'not_found') {
+      soundManager.playNotFound();
+    } else if (currentStep.action === 'eliminate') {
+      soundManager.playTone(280, 45, 0.4);
     } else if (currentStep.action === 'done') {
       soundManager.playCompletionSweep(currentStep.array);
     }
@@ -225,7 +268,6 @@ export default function App() {
   // Keyboard navigation shortcuts
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      // Ignore if user is typing in an input or textarea
       if (['INPUT', 'TEXTAREA'].includes((e.target as HTMLElement).tagName)) {
         return;
       }
@@ -267,12 +309,14 @@ export default function App() {
 
   return (
     <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col font-sans selection:bg-cyan-500/20 selection:text-cyan-200">
-      {/* 3-Zone Top Navigation Bar */}
+      {/* 3-Zone Top Navigation Bar with Category Switcher */}
       <Header
         activeTab={activeTab}
         onTabChange={setActiveTab}
         onOpenListManager={() => setIsListModalOpen(true)}
         listCount={numberLists.length}
+        category={category}
+        onCategoryChange={handleCategoryChange}
       />
 
       {/* Main Content Area */}
@@ -284,9 +328,9 @@ export default function App() {
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-slate-900/60 border border-slate-800 p-3.5 rounded-xl">
               <div className="flex items-center gap-2 overflow-x-auto pb-1 md:pb-0">
                 <span className="text-xs font-semibold uppercase tracking-wider text-slate-400 mr-1">
-                  Algorithm:
+                  {category === 'searching' ? 'Search Algorithm:' : 'Sort Algorithm:'}
                 </span>
-                {ALGORITHM_LIST.map((algo) => {
+                {availableAlgorithms.map((algo) => {
                   const isSelected = algo.id === selectedAlgoId;
                   return (
                     <button
@@ -316,6 +360,18 @@ export default function App() {
                 </span>
               </div>
             </div>
+
+            {/* Target Value Bar when Searching */}
+            {category === 'searching' && (
+              <SearchTargetInput
+                target={searchTarget}
+                onTargetChange={setSearchTarget}
+                array={activeList.data}
+                requiresSorted={activeAlgorithm.requiresSorted}
+                isSorted={isArraySorted}
+                onSortArray={handleSortActiveList}
+              />
+            )}
 
             {/* Active List Selector */}
             <ListSelector
@@ -403,6 +459,7 @@ export default function App() {
           <MultiListLab
             lists={numberLists}
             algorithm={activeAlgorithm}
+            target={searchTarget}
             onSelectAndDebugList={handleSelectAndDebugList}
             onOpenListManager={() => setIsListModalOpen(true)}
           />
@@ -410,7 +467,12 @@ export default function App() {
 
         {/* Algorithm Comparison View */}
         {activeTab === 'compare' && (
-          <CompareView currentList={activeList} />
+          <CompareView
+            currentList={activeList}
+            category={category}
+            target={searchTarget}
+            onTargetChange={setSearchTarget}
+          />
         )}
 
         {/* Comprehensive C++ Guide View */}

@@ -61,7 +61,9 @@ Many introductory computer science students struggle when first transitioning fr
 - Full transport controls: Play/Pause, Step Forward, Step Backward, Jump to Start, Fast Forward, and Scrubbing Slider.
 - Adjustable speed multiplier (0.25x slow-motion up to 4x).
 
-### 2. Supported Sorting Algorithms
+### 2. Supported Sorting & Searching Algorithms (10 Algorithms Total)
+
+#### 🔄 Sorting Algorithms (5)
 | Algorithm | C++ Function Signature | Best Case | Average Case | Worst Case | Extra Space | Stability |
 | :--- | :--- | :---: | :---: | :---: | :---: | :---: |
 | **Bubble Sort** | `void bubbleSort(int arr[], int n)` | $O(N)$ | $O(N^2)$ | $O(N^2)$ | $O(1)$ | Yes |
@@ -69,6 +71,15 @@ Many introductory computer science students struggle when first transitioning fr
 | **Insertion Sort** | `void insertionSort(int arr[], int n)` | $O(N)$ | $O(N^2)$ | $O(N^2)$ | $O(1)$ | Yes |
 | **Quick Sort** | `void quickSort(int arr[], int low, int high)` | $O(N \log N)$ | $O(N \log N)$ | $O(N^2)$ | $O(\log N)$ | No |
 | **Merge Sort** | `void mergeSort(int arr[], int left, int right)` | $O(N \log N)$ | $O(N \log N)$ | $O(N \log N)$ | $O(N)$ | Yes |
+
+#### 🔍 Searching Algorithms (5)
+| Algorithm | C++ Function Signature | Best Case | Average Case | Worst Case | Extra Space | Sorted Required? |
+| :--- | :--- | :---: | :---: | :---: | :---: | :---: |
+| **Linear Search** | `int linearSearch(int arr[], int n, int target)` | $O(1)$ | $O(N)$ | $O(N)$ | $O(1)$ | No |
+| **Binary Search** | `int binarySearch(int arr[], int n, int target)` | $O(1)$ | $O(\log N)$ | $O(\log N)$ | $O(1)$ | Yes |
+| **Jump Search** | `int jumpSearch(int arr[], int n, int target)` | $O(1)$ | $O(\sqrt{N})$ | $O(\sqrt{N})$ | $O(1)$ | Yes |
+| **Interpolation Search** | `int interpolationSearch(int arr[], int n, int target)` | $O(1)$ | $O(\log \log N)$ | $O(N)$ | $O(1)$ | Yes |
+| **Exponential Search** | `int exponentialSearch(int arr[], int n, int target)` | $O(1)$ | $O(\log i)$ | $O(\log N)$ | $O(1)$ | Yes |
 
 ### 3. List of Lists (Custom Datasets & Test Suites)
 - **Built-in Presets**:
