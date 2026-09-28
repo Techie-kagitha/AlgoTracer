@@ -15,10 +15,10 @@
 
 Click the link below to open and use the live interactive application immediately:
 
-### 🔗 **[Launch AlgoTrace C++ Live App](https://aistudio.google.com/apps/42aa0ae3-9273-4184-9636-8a77fdba218e?fullscreenApplet=true&project=gen-lang-client-0839582446&showAssistant=true&showPreview=true)**
+### 🔗 **[Launch AlgoTrace C++ Live App](https://ais-pre-qjy3k3vwzmqpzf665ivibh-838265961928.us-east1.run.app)**
 
 ```
-https://aistudio.google.com/apps/42aa0ae3-9273-4184-9636-8a77fdba218e?fullscreenApplet=true&project=gen-lang-client-0839582446&showAssistant=true&showPreview=true
+https://ais-pre-qjy3k3vwzmqpzf665ivibh-838265961928.us-east1.run.app
 ```
 
 Students can run this on any laptop, tablet, Chromebook, or mobile browser without having to install compilers or development tools.
