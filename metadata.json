@@ -1,0 +1,7 @@
+{
+  "name": "AlgoTrace C++ · Sorting Visualizer",
+  "description": "Interactive C++ sorting algorithm visualizer with synchronized line-by-line execution, pointer tracing, and multi-list test suites for Bubble, Selection, Insertion, Quick, and Merge Sort.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
+
